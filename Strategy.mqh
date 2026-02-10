@@ -46,6 +46,8 @@ int GetSignal(string symbol, ENUM_TIMEFRAMES tf)
       case STRATEGY_MEAN_REVERSION:  return SignalMeanReversion(symbol, tf);
       case STRATEGY_GRID:            return SignalGrid(symbol, tf);
       case STRATEGY_CUSTOM:          return SignalCustom(symbol, tf);
+      case STRATEGY_AI:              return SignalAI(symbol, tf);
+      case STRATEGY_AI_HYBRID:       return SignalAI_Hybrid(symbol, tf);
       default:                       return SIGNAL_NONE;
    }
 }

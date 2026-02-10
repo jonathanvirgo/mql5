@@ -312,6 +312,8 @@ string GetStrategyName()
       case STRATEGY_BREAKOUT:        return "Breakout";
       case STRATEGY_MEAN_REVERSION:  return "Mean Reversion";
       case STRATEGY_GRID:            return "Grid";
+      case STRATEGY_AI:              return "AI (" + EnumToString(InpAI_Provider) + ")";
+      case STRATEGY_AI_HYBRID:       return "AI Hybrid (" + EnumToString(InpAI_Provider) + ")";
       case STRATEGY_CUSTOM:
       {
          switch(InpCustomSignal)

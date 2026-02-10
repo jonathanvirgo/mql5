@@ -19,7 +19,9 @@ enum ENUM_STRATEGY
    STRATEGY_BREAKOUT        = 2,  // Breakout (Donchian Channel)
    STRATEGY_MEAN_REVERSION  = 3,  // Mean Reversion (RSI + BB Bounce)
    STRATEGY_GRID            = 4,  // Grid Trading
-   STRATEGY_CUSTOM          = 5   // Custom Strategy (User Defined)
+   STRATEGY_CUSTOM          = 5,  // Custom Strategy (User Defined)
+   STRATEGY_AI              = 6,  // AI Only (100% AI Decision)
+   STRATEGY_AI_HYBRID       = 7   // AI Hybrid (Technical + AI Confirmation)
 };
 
 // Phương pháp tính lot
@@ -47,6 +49,26 @@ enum ENUM_CUSTOM_SIGNAL
    CUSTOM_ADX_STOCH    = 2,  // ADX + Stochastic
    CUSTOM_ICHIMOKU     = 3,  // Ichimoku Cloud
    CUSTOM_MULTI_TF     = 4   // Multi-Timeframe MA
+};
+
+// AI Provider
+enum ENUM_AI_PROVIDER
+{
+   AI_OPENAI     = 0,  // OpenAI (GPT-4o / GPT-4o-mini)
+   AI_GEMINI     = 1,  // Google Gemini (Flash / Pro)
+   AI_CLAUDE     = 2,  // Anthropic Claude
+   AI_DEEPSEEK   = 3,  // DeepSeek
+   AI_CUSTOM_URL = 4   // Custom API URL (OpenAI-compatible)
+};
+
+// AI Hybrid Base Strategy (for AI confirmation)
+enum ENUM_AI_BASE_STRATEGY
+{
+   AI_BASE_TREND     = 0,  // Trend Following
+   AI_BASE_SCALPING  = 1,  // Scalping
+   AI_BASE_BREAKOUT  = 2,  // Breakout
+   AI_BASE_REVERSION = 3,  // Mean Reversion
+   AI_BASE_CUSTOM    = 4   // Custom
 };
 
 //+------------------------------------------------------------------+
@@ -213,6 +235,21 @@ input string           InpTelegramChatID  = "";                              // 
 input bool             InpTgNotifyEntry   = true;                            // Notify on Entry
 input bool             InpTgNotifyExit    = true;                            // Notify on Exit
 input bool             InpTgNotifyDaily   = false;                           // Daily Summary Report
+
+//+------------------------------------------------------------------+
+//| AI STRATEGY SETTINGS                                             |
+//+------------------------------------------------------------------+
+input string           InpSepAI           = "════════ AI STRATEGY ════════"; // ══ AI Strategy ══
+input ENUM_AI_PROVIDER InpAI_Provider     = AI_GEMINI;                       // AI Provider
+input string           InpAI_ApiKey       = "";                              // API Key
+input string           InpAI_Model        = "gemini-2.0-flash";              // Model Name
+input string           InpAI_CustomURL    = "";                              // Custom API URL (if Custom)
+input int              InpAI_Confidence   = 60;                              // Min Confidence % (0-100)
+input int              InpAI_Candles      = 10;                              // Candles to Send to AI
+input int              InpAI_Timeout      = 10;                              // API Timeout (seconds)
+input int              InpAI_Cooldown     = 60;                              // Cooldown Between Calls (seconds)
+input ENUM_AI_BASE_STRATEGY InpAI_BaseStrategy = AI_BASE_TREND;              // Hybrid Base Strategy
+input bool             InpAI_TgNotify     = true;                            // Send AI Analysis to Telegram
 
 //+------------------------------------------------------------------+
 //| DASHBOARD                                                        |

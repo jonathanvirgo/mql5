@@ -1,16 +1,17 @@
 # 🤖 AutoTraderBot - MQL5 Expert Advisor
 
-Bot giao dịch tự động hoàn toàn có thể tùy chỉnh cho MetaTrader 5 với **6 chiến lược giao dịch**, **quản lý rủi ro nâng cao**, và **thông báo Telegram**.
+Bot giao dịch tự động hoàn toàn có thể tùy chỉnh cho MetaTrader 5 với **8 chiến lược giao dịch** (bao gồm **AI-powered**), **quản lý rủi ro nâng cao**, và **thông báo Telegram**.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![MQL5](https://img.shields.io/badge/MQL5-Expert%20Advisor-blue)](https://www.mql5.com)
 [![Telegram](https://img.shields.io/badge/Telegram-Notifications-26A5E4?logo=telegram)](https://telegram.org)
+[![AI](https://img.shields.io/badge/AI-Powered-ff6f00?logo=openai)](https://openai.com)
 
 ---
 
 ## ✨ Tính năng chính
 
-### 📊 6 Chiến lược giao dịch
+### 📊 8 Chiến lược giao dịch
 | Chiến lược | Mô tả | Indicators |
 |-----------|-------|------------|
 | **Trend Following** | Theo xu hướng thị trường | MA Crossover + ADX filter |
@@ -19,6 +20,8 @@ Bot giao dịch tự động hoàn toàn có thể tùy chỉnh cho MetaTrader 5
 | **Mean Reversion** | Quay về giá trị trung bình | RSI bounce + BB bounce |
 | **Grid Trading** | Đặt lệnh theo lưới giá | Grid spacing + MA direction |
 | **Custom** | Tùy chỉnh theo ý bạn | 5 sub-strategies ⬇️ |
+| **🤖 AI Only** | AI quyết định 100% | OpenAI / Gemini / Claude / DeepSeek |
+| **🤖 AI Hybrid** | Technical + AI xác nhận | AI confirmation filter ⭐ |
 
 #### Custom Sub-Strategies
 - **MA + RSI Combo** - Kết hợp Moving Average và RSI với tham số tùy chỉnh
@@ -62,14 +65,15 @@ Dashboard hiển thị trên chart với thông tin real-time:
 
 ```
 mql5/
-├── AutoTraderBot.mq5      # Main EA file
-├── Settings.mqh           # 50+ input parameters
-├── Strategy.mqh           # 6 trading strategies + 5 custom
+├── AutoTraderBot.mq5      # Main EA file (v2.00)
+├── Settings.mqh           # 60+ input parameters
+├── Strategy.mqh           # 8 trading strategies + 5 custom
+├── AIStrategy.mqh         # 🤖 AI-powered strategy (NEW)
 ├── Indicators.mqh         # Indicator wrappers (MA, RSI, BB, MACD, ADX, Stoch, Ichimoku)
 ├── RiskManager.mqh        # Risk management & lot sizing
 ├── TradeManager.mqh       # Trade execution, trailing stop, break even
 ├── Utils.mqh              # Telegram, notifications, filters
-└── Dashboard.mqh          # On-chart dashboard
+└── Dashboard.mqh          # On-chart dashboard (with AI status)
 ```
 
 ---
@@ -128,12 +132,58 @@ Trong tab **Inputs** của EA:
 
 ---
 
+## 🤖 Cấu hình AI Strategy
+
+### Hỗ trợ 5 AI Provider
+| Provider | Model mặc định | Free tier? |
+|----------|----------------|------------|
+| **Gemini** | `gemini-2.0-flash` | ✅ Có |
+| **OpenAI** | `gpt-4o-mini` | ❌ |
+| **Claude** | `claude-sonnet-4-20250514` | ❌ |
+| **DeepSeek** | `deepseek-chat` | ❌ |
+| **Custom URL** | Tùy chỉnh | Tùy |
+
+### Bước 1: Lấy API Key
+- **Gemini (recommend)**: [ai.google.dev](https://ai.google.dev/) → Create API Key (miễn phí)
+- **OpenAI**: [platform.openai.com](https://platform.openai.com/) → API Keys
+- **Claude**: [console.anthropic.com](https://console.anthropic.com/) → API Keys
+- **DeepSeek**: [platform.deepseek.com](https://platform.deepseek.com/) → API Keys
+
+### Bước 2: Whitelist URL trong MT5
+1. **Tools → Options → Expert Advisors → Allow WebRequest**
+2. Thêm URL tương ứng:
+   - Gemini: `https://generativelanguage.googleapis.com`
+   - OpenAI: `https://api.openai.com`
+   - Claude: `https://api.anthropic.com`
+   - DeepSeek: `https://api.deepseek.com`
+
+### Bước 3: Cấu hình trong EA
+```
+Strategy: AI Hybrid (recommended) hoặc AI Only
+AI Provider: Google Gemini
+API Key: <your-api-key>
+Model Name: gemini-2.0-flash
+Min Confidence: 60%
+Cooldown: 60 (seconds)
+Hybrid Base Strategy: Trend Following
+```
+
+### Cách AI hoạt động
+1. **AI Only**: Bot gửi dữ liệu thị trường (OHLC + indicators) đến AI → AI trả về BUY/SELL/HOLD
+2. **AI Hybrid** ⭐: Technical indicators tạo tín hiệu trước → AI chỉ xác nhận/từ chối → Giảm false signals
+
+### Chi phí ước tính (Gemini Flash)
+- H1: ~24 calls/ngày → **~$0.72/tháng**
+- H4: ~6 calls/ngày → **~$0.18/tháng**
+
+---
+
 ## ⚙️ Cấu hình Settings
 
 Khi attach EA, bạn sẽ thấy panel settings được chia thành các nhóm:
 
 ### 🎯 General Settings
-- **Strategy** - Chọn 1 trong 6 chiến lược
+- **Strategy** - Chọn 1 trong 8 chiến lược (bao gồm AI)
 - **Magic Number** - Số định danh duy nhất cho EA
 - **Timeframe** - Khung thời gian giao dịch
 
@@ -209,6 +259,18 @@ Mỗi indicator có các tham số riêng:
 - **Dash Bg Color** - Màu nền
 - **Dash Font Size** - Kích thước font
 
+### 🤖 AI Strategy
+- **AI Provider** - Chọn OpenAI / Gemini / Claude / DeepSeek / Custom
+- **API Key** - API key của provider
+- **Model Name** - Tên model AI
+- **Custom API URL** - URL cho Custom provider
+- **Min Confidence %** - Ngưỡng confidence tối thiểu (0-100)
+- **Candles to Send** - Số nến gửi cho AI phân tích
+- **API Timeout** - Thời gian chờ response (giây)
+- **Cooldown** - Thời gian tối thiểu giữa các lần gọi API (giây)
+- **Hybrid Base Strategy** - Chiến lược technical cho mode Hybrid
+- **Send AI to Telegram** - Gửi phân tích AI qua Telegram
+
 ---
 
 ## 📖 Ví dụ cấu hình
@@ -252,6 +314,22 @@ Grid Spacing: 30 pips
 Grid Max Levels: 5
 Grid Multiplier: 1.5
 Max Orders: 5
+```
+
+### Cấu hình 4: AI Hybrid XAUUSD H1 (với Gemini)
+```
+Strategy: AI Hybrid
+Timeframe: H1
+AI Provider: Google Gemini
+API Key: <your-gemini-key>
+Model: gemini-2.0-flash
+Min Confidence: 65%
+Cooldown: 60s
+Hybrid Base: Trend Following
+Lot Mode: Percent of Balance
+Risk Percent: 1.0%
+SL Pips: 50
+TP Pips: 100
 ```
 
 ---

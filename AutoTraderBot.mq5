@@ -12,8 +12,8 @@
 //+------------------------------------------------------------------+
 #property copyright   "AutoTraderBot"
 #property link        ""
-#property version     "1.00"
-#property description "Fully configurable auto trading bot"
+#property version     "2.00"
+#property description "Fully configurable auto trading bot with AI integration"
 #property strict
 
 //+------------------------------------------------------------------+
@@ -24,6 +24,7 @@
 #include "RiskManager.mqh"
 #include "TradeManager.mqh"
 #include "Strategy.mqh"
+#include "AIStrategy.mqh"
 #include "Utils.mqh"
 #include "Dashboard.mqh"
 
@@ -270,6 +271,20 @@ bool ValidateSettings()
    if(InpUseTelegram && (InpTelegramToken == "" || InpTelegramChatID == ""))
    {
       Print("WARNING: Telegram enabled but Token/ChatID not set");
+   }
+   
+   // AI strategy validation
+   if((InpStrategy == STRATEGY_AI || InpStrategy == STRATEGY_AI_HYBRID) && InpAI_ApiKey == "")
+   {
+      Print("WARNING: AI Strategy selected but API Key is empty!");
+      Print("Go to Settings > AI Strategy > API Key and enter your key.");
+   }
+   
+   if(InpStrategy == STRATEGY_AI || InpStrategy == STRATEGY_AI_HYBRID)
+   {
+      Print("AI Strategy enabled: ", EnumToString(InpAI_Provider), " Model: ", InpAI_Model);
+      Print("AI Confidence threshold: ", InpAI_Confidence, "% | Cooldown: ", InpAI_Cooldown, "s");
+      Print("IMPORTANT: Add the AI API URL to Tools > Options > Expert Advisors > Allow WebRequest!");
    }
    
    return valid;

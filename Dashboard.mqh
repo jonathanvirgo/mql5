@@ -92,8 +92,11 @@ void UpdateDashboard(string symbol, int magicNumber)
    color headerColor  = C'100,180,255';
    color accentColor  = C'255,200,50';
    
-   // Background
-   DashCreateBackground(x - 5, y - 5, 260, lineHeight * 16 + 15, InpDashBgColor);
+   // Background - adjust height for AI info
+   int bgHeight = lineHeight * 16 + 15;
+   if(InpStrategy == STRATEGY_AI || InpStrategy == STRATEGY_AI_HYBRID)
+      bgHeight = lineHeight * 18 + 15;
+   DashCreateBackground(x - 5, y - 5, 280, bgHeight, InpDashBgColor);
    
    int row = 0;
    
@@ -170,6 +173,21 @@ void UpdateDashboard(string symbol, int magicNumber)
    
    DashCreateLabel("STS", x, y + lineHeight * row, "Status:   " + status, stColor, fs);
    row++;
+   
+   // AI info (if using AI strategy)
+   if(InpStrategy == STRATEGY_AI || InpStrategy == STRATEGY_AI_HYBRID)
+   {
+      DashCreateLabel("SEP4", x, y + lineHeight * row, "━━━━━━━━━━━━━━━━━━━━━━━━━", C'60,60,80', fs);
+      row++;
+      
+      string aiStatus = g_aiAvailable ? "Online" : "Offline";
+      color aiColor = g_aiAvailable ? profitColor : lossColor;
+      DashCreateLabel("AIS", x, y + lineHeight * row, 
+         "AI: " + aiStatus + " | Conf: " + IntegerToString(g_aiLastConfidence) + "% | " +
+         (g_aiLastSignal == SIGNAL_BUY ? "BUY" : (g_aiLastSignal == SIGNAL_SELL ? "SELL" : "HOLD")),
+         aiColor, fs);
+      row++;
+   }
    
    // Time
    DashCreateLabel("TIM", x, y + lineHeight * row, "Time:     " + TimeToString(TimeCurrent(), TIME_SECONDS), C'120,120,140', fs);
